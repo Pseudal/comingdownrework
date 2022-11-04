@@ -42,12 +42,24 @@ export function VanillaElseIfHell(ent, EntSprite, spawnDanger, data, remove, IRF
     }
     //Daddy & triachnide
   }else if ((ent.Type == 101) && IRFconfig.Daddy){
-    if((EntSprite.IsPlaying("StompArm") || EntSprite.IsPlaying("StompLeg"))){
-      if(EntSprite.GetFrame() == 1){
+    if(IRFconfig.DadAlt){//Used for the alternative animZone
+      if((EntSprite.IsPlaying("StompArm") || EntSprite.IsPlaying("StompLeg")) && ent.SpawnerEntity == undefined){
+        if(EntSprite.GetFrame() == 1){
+          spawnDanger(ent)
+        }
+      }
+      if(ent.SpawnerEntity != undefined){
+        //printConsole(`${ent.Index}`)
         spawnDanger(ent)
       }
+    }else{
+      if((EntSprite.IsPlaying("StompArm") || EntSprite.IsPlaying("StompLeg"))){
+        if(EntSprite.GetFrame() == 1){
+          spawnDanger(ent)
+        }
+      }
     }
-    else if(BetterMonsters == undefined){
+    if(BetterMonsters == undefined){
       if((EntSprite.IsPlaying("Down"))){
         if(EntSprite.GetFrame() == 1){
           spawnDanger(ent)
@@ -55,7 +67,7 @@ export function VanillaElseIfHell(ent, EntSprite, spawnDanger, data, remove, IRF
       }
     }
     //BetterMonster compatibility
-    else if(BetterMonsters !== undefined){
+    if(BetterMonsters !== undefined){
       if(EntSprite.IsPlaying("Up")){
         if(EntSprite.IsEventTriggered ( "Jump" )){
           spawnDanger(ent)

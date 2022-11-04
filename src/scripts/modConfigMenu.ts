@@ -49,6 +49,9 @@ export function ModConfig(IRFconfig) {
           if(entity == "RockFall" && (IsOn == 1 || true)){
             IRFconfig["AllProjectile"] = false
           }
+          if(entity == "Daddy" && (IsOn == 0 || false)){
+            IRFconfig["DadAlt"] = false
+          }
           IRFconfig[entity] = IsOn as boolean;
         },
         Info: [`${desc}`],
@@ -89,6 +92,7 @@ export function ModConfig(IRFconfig) {
       addItem("Splashy", "Other", "Splashy", "Enables the indicator for Splashy and her variants.");
       addItem("RogHorn", "Other", "RogHorn", "Enables the indicator for RogHorn and his variants(not rly useful).");
 //    }
+    addItem("DadAlt", "Special", "Daddy alt", "Alternative animation for daddy, I don't really like it, but can be more practical..");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");

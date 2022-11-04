@@ -28,6 +28,7 @@ let IRFconfig = {
   Peep: true,
   blastocyst: true,
   Daddy: true,
+  DadAlt: true,
   MomHand: true,
   MegaFatty: true,
   ALeach: true,
