@@ -105,7 +105,6 @@ function postRender(){
     //!check some special Vanilla entity end of stomp & normal stop action
     if(data.Danger == 1 && ent.Type !== 412  && (EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" )))){
       removeDanger(data)
-      //printConsole(`${ent.Index} trigger`)
     }
     VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
     if(IRFconfig.Delirium){
