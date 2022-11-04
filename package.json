@@ -1,0 +1,23 @@
+{
+  "name": "comingdownrework",
+  "version": "0.0.0",
+  "description": "A mod for The Binding of Isaac: Repentance.",
+  "keywords": [
+    "isaac",
+    "mod",
+    "rebirth",
+    "afterbirth",
+    "repentance"
+  ],
+  "license": "GPL-3.0",
+  "type": "commonjs",
+  "dependencies": {
+    "isaac-typescript-definitions": "^9.0.4",
+    "isaacscript": "^3.3.4",
+    "isaacscript-common": "^15.3.6",
+    "isaacscript-lint": "^4.2.0",
+    "isaacscript-spell": "^1.2.17",
+    "typescript": "^4.8.4",
+    "typescript-to-lua": "^1.10.1"
+  }
+}

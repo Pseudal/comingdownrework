@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<metadata>
+  <name>Coming Down ! [Dev]</name>
+  <directory>! coming down stomps dev</directory>
+  <id>2878352867</id>
+  <description>
+Coming Down! adds high-visibility visual tells to all stomp/jump attacks
+Basically, this mod aims to reduce the frustration against hard to see attacks, coming from the sky and some projectiles like Bumbino rocks.
+I strongly recommend installing [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2487535818]Mod Config Menu - Continued[/url] to be able to choose the mobs impacted and have new options!
+[img]https://i.imgur.com/UHABsZv.gif[/img]
+
+In addition, this mod is now compatible with several mods:
+-[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2847697646]Reworked Foes[/url]
+[img]https://i.imgur.com/J35VnzL.gif[/img]
+-[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2851063440]Fiend Folio[/url]
+[img]https://i.imgur.com/lkm5xBz.gif[/img]
+And others like [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2718219818]Splashy and Roghorn[/url] or [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2700801027]Sigmonstro[/url]
+
+Credit and thanks :
+-PixelPlz
+-Querty
+You can find the reupload version (with delirium) here : [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2880692259]Link[/url]
+And the original mod here : [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2611178673]Link[/url]
+Made with the IsaacScript framework
+</description>
+  <version>2.0</version>
+  <visibility />
+  <tag id="Lua"/>
+  <tag id="Bosses"/>
+  <tag id="Hazards"/>
+  <tag id="Graphics"/>
+</metadata>

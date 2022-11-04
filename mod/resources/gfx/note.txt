@@ -1,0 +1,2 @@
+hey, yeah I know, this animation is kind of a dumb thing.
+Kinda lazy to make a billion conditions to play fadeout/loop etc

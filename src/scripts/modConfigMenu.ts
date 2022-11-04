@@ -1,0 +1,99 @@
+export function ModConfig(IRFconfig) {
+  if (ModConfigMenu !== undefined) {
+    ModConfigMenu.RemoveCategory("Coming Down!");
+
+    ModConfigMenu.AddSpace("Coming Down!", "About");
+    ModConfigMenu.AddText("Coming Down!","About",() => "Coming Down ![Rework]",);
+    ModConfigMenu.AddSpace("Coming Down!", "About");
+    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.0`);
+
+    ModConfigMenu.AddSpace("Coming Down!", "About");
+    ModConfigMenu.AddText("Coming Down!", "About", () => "Remake made by Tidloas with love");
+    ModConfigMenu.AddSpace("Coming Down!", "About");
+
+    ModConfigMenu.AddSetting("Coming Down!", `Vanilla`, {
+      Type: ModConfigMenuOptionType.BOOLEAN,
+      CurrentSetting() {
+        return IRFconfig.FatSack;
+      },
+      Display() {
+        let onOff = "Disabled";
+        if (IRFconfig.FatSack == true) {
+          onOff = "Enabled";
+        }
+        return `FatSack: ${onOff}`;
+      },
+      OnChange(IsOn) {
+        IRFconfig.FatSack = IsOn as boolean;
+      },
+      Info: [`disables the indicator for FatSack and his variants`],
+    });
+
+    function addItem(entity, type, name, desc) {
+      ModConfigMenu.AddSetting("Coming Down!", `${type}`, {
+        Type: ModConfigMenuOptionType.BOOLEAN,
+        CurrentSetting() {
+          return IRFconfig[entity];
+        },
+        Display() {
+          let onOff = "Disabled";
+          if (IRFconfig[entity] == true) {
+            onOff = "Enabled";
+          }
+          return `${name}: ${onOff}`;
+        },
+        OnChange(IsOn) {
+          if(entity == "AllProjectile" && (IsOn == 1 || true)){
+            IRFconfig["RockFall"] = false
+          }
+          if(entity == "RockFall" && (IsOn == 1 || true)){
+            IRFconfig["AllProjectile"] = false
+          }
+          IRFconfig[entity] = IsOn as boolean;
+        },
+        Info: [`${desc}`],
+      });
+    }
+    addItem("Leaper", "Vanilla", "Leaper", "Enables the indicator for Leaper and his variants.");
+    addItem("Monstro", "Vanilla", "Monstro", "Enables the indicator for Monstro, Monstro II, Gish and their variants.");
+    addItem("Mom", "Vanilla", "Mom's Stomp", "Enables the indicator for Mom and her variants");
+    addItem("Peep", "Vanilla", "Peep", "Enables the indicator for Peep and his variants.");
+    addItem("blastocyst", "Vanilla", "Blastocyst", "Enables the indicator for Blastocyst and his variants.");
+    addItem("Daddy", "Vanilla", "Daddy", "Enables the indicator for Daddy, Triachnide and their variants.");
+    addItem("MomHand", "Vanilla", "Mom's hand", "Enables the indicator for Mom's hand and her variants.");
+    addItem("MegaFatty", "Vanilla", "Mega Fatty", "Enables the indicator for Mega fatty(2), sister's vis and their variants.");
+    addItem("ALeach", "Vanilla", "Adult Leach", "Enables the indicator for Adult leach and his variants.");
+    addItem("Beelzeblub", "Vanilla", "Beelzeblub", "Enables the indicator for Beelzeblub and his variants.");
+    addItem("Singe", "Vanilla", "Singe", "Enables the indicator for Singe and his variants.");
+    addItem("Adversary", "Vanilla", "The Adversary", "Enables the indicator for The Adversary and his variants.");
+    addItem("Delirium", "Vanilla", "Delirium", "Takes into account ALL Delirium transformations. Unpredictable effect with any delirium modifying mod. May be inaccurate.");
+    addItem("MegaSatan", "Vanilla", "MegaSatan", "Enables the indicator for MegaSatan hands.");
+    addItem("UltraGreed", "Vanilla", "Ultra Greed", "Enables the indicator for Ultra greedier.");
+    addItem("Mother", "Vanilla", "Mother", "Enable the Enables for Mother(not rly useful).");
+    addItem("RockFall", "Projectiles", "RockFall", "Enables the indicator on falling rocks, with Bumbino for example (this option impacts all these projectiles).");
+    addItem("GreedCoin", "Projectiles", "GreedBigCoin", "Enables the indicator for Greedier big coin.");
+    addItem("AllProjectile", "Projectiles", "All Falling Projectiles", "Experimental option, activates the indicator on all projectiles falling on Isaac. Possible bug and incompatibility.");
+//    if(Fiend ){
+      addItem("Slammer", "FiendFolio", "Slammer", "Enables the indicator for Slammer and his variants.");
+      addItem("Poobottle", "FiendFolio", "Poobottle", "Enables the indicator for Poobottle, Dragonfly and their variants.");
+      addItem("Diplet", "FiendFolio", "Diplet", "Enables the indicator for Diplet and his variants.");
+      addItem("Battie", "FiendFolio", "Battie", "Enables the indicator for Battie and his variants.");
+      addItem("Monsoon", "FiendFolio", "Monsoon", "Enables the indicator for Monsoon and his variants.");
+      addItem("Peeping", "FiendFolio", "Peeping", "Enables the indicator for Peeping and his variants.");
+      addItem("Tsar", "FiendFolio", "Tsar", "Enables the indicator for Tsar and his variants.");
+      addItem("Dusk", "FiendFolio", "Dusk", "Enables the indicator for Dusk and his variants.");
+//    }
+
+//    if(SWAMP ){
+      ModConfigMenu.AddText("Coming Down!", "Other", () => "Splashy and Roghorn: ");
+      addItem("Splashy", "Other", "Splashy", "Enables the indicator for Splashy and her variants.");
+      addItem("RogHorn", "Other", "RogHorn", "Enables the indicator for RogHorn and his variants(not rly useful).");
+//    }
+    ModConfigMenu.AddSpace("Coming Down!", "Credit");
+    ModConfigMenu.AddSpace("Coming Down!", "Credit");
+    ModConfigMenu.AddSpace("Coming Down!", "Credit");
+    ModConfigMenu.AddText("Coming Down!", "Credit", () => "PixelPlz for his advice and help");
+    ModConfigMenu.AddText("Coming Down!", "Credit", () => "Querty for his contribution on the Revamp");
+    ModConfigMenu.AddText("Coming Down!", "Credit", () => "Made with the IsaacScript framework");
+  }
+}

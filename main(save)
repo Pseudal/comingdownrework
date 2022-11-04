@@ -1,0 +1,304 @@
+import { ModCallback, ProjectileVariant } from "isaac-typescript-definitions";
+import { printConsole, jsonDecode, jsonEncode, } from "isaacscript-common";
+
+import * as json from "json";
+import { FFCompatibility } from "./scripts/FiendFolio";
+//import {IRFconfig} from "./scripts/Config"
+//import {ModConfig} from "./scripts/modConfigMenu"
+interface DangerData {
+  Danger: int | undefined;
+}
+let DebugText = "";
+let ActiveEnemy = [] as Entity[];
+let ActiveZone = [] as Entity[];
+let ActiveProjectile = [] as Entity[];
+declare const BetterMonsters: unknown | undefined;
+declare const FiendFolio: unknown | undefined;
+//declare let ModConfigMenu : unknown | undefined;
+let IRFconfig = {
+  FatSack: true,
+  Leaper: true,
+  Monstro: true,
+  Mom: true,
+  Peep: true,
+  blastocyst: true,
+  Daddy: true,
+  MomHand: true,
+  MegaFatty: true,
+  ALeach: true,
+  Beelzeblub: true,
+  Singe: true,
+  Adversary: true,
+  //Fiend Folio
+  Slammer: true,
+  Poobottle: true,
+  Diplet: true,
+  Battie: true,
+  Monsoon: true,
+  Peeping: true,
+  Tsar: true,
+  Dusk: true,
+  RockFall: true,
+  AllProjectile: false,
+}
+main();
+//! post bordel
+
+function removeDanger(ent, data){
+  for (let i = ActiveZone.length-1; i >= 0; i--) {
+    if(ActiveZone[i]?.Parent?.Index == ent?.Index){
+      ActiveZone[i].Remove();
+      data.Danger = 0;
+    }
+  }
+}
+
+function spawnProjectileDanger(Projectile){
+  let data = Projectile.GetData() as DangerData;
+  let anim = Isaac.Spawn(1000, 8745, 0, Projectile.Position, Vector(0,0), undefined)
+  //anim.ToEffect().FollowParent(Projectile)
+  // anim.SetSize(-50, Vector(1,1), 0)
+  anim.SpriteScale = Vector(0.05*Projectile.Size, 0.05*Projectile.Size)
+  anim.Parent = Projectile
+  ActiveProjectile.push(anim)
+  data.Danger = 1;
+}
+
+function spawnDanger(entity, scale?){
+
+  let data = entity.GetData() as DangerData; //!This is a security, prevents some entity from having multiple zones
+  if(data.Danger == 1)
+    return;
+
+  let anim = Isaac.Spawn(1000, 8745, 0, Vector(entity.Position.X, entity.Position.Y), Vector(0,0), undefined) //* spawn the animation
+  anim.ToEffect().FollowParent(entity) //*make the animation follow the trigger entity
+  if(scale){ //*Some mob have a small size, this condition is used in case an adjustment is needed.
+    anim.SpriteScale = Vector(scale*entity.Size, scale*entity.Size) //* make the animation scale with the entity size
+  }else{
+    anim.SpriteScale = Vector(0.0225*entity.Size, 0.0225*entity.Size)//*Randomly found number, with this value, the area is a bit bigger than the mob in majority
+  }
+  anim.Parent = entity //* make the animation parent the trigger entity, for the suppression
+  ActiveZone.push(anim) //* activeZone used to retrieve the animation later
+
+  data.Danger = 1; //! After the DangerZone is created, the parent entity is set to 1 for safety
+}
+
+function postRender(){
+  ActiveEnemy.forEach(ent => {
+    let data = ent.GetData() as unknown as DangerData;
+    let EntSprite = ent.GetSprite()
+    //!check some special normal entity end of stomp & normal stop action
+    if(EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" ))){
+      removeDanger(ent, data)
+    }
+      //leaper
+    if(ent.Type == 34 && EntSprite.IsPlaying("BigJumpUp")){
+      if(IRFconfig.Leaper){
+        if(EntSprite.IsEventTriggered ( "Jump" )){
+          spawnDanger(ent)
+        }
+      }
+
+      //Monstro & MonstroII & Gish
+    }else if ((ent.Type == 20 || ent.Type == 43) && EntSprite.IsPlaying("JumpUp" )){
+      if(IRFconfig.Monstro){
+        if(EntSprite.IsEventTriggered ( "Jump" )){
+          spawnDanger(ent)
+        }
+      }
+      //Mom & Satan stomp
+    }else if ((ent.Type == 45 || ent.Type == 84) && EntSprite.IsPlaying("Stomp" ) && IRFconfig.Mom){
+        if(EntSprite.GetFrame() == 3){
+          spawnDanger(ent, 0.03)
+        }
+      //Peep
+    }else if (ent.Type == 68 && EntSprite.IsPlaying("JumpUp") && IRFconfig.Peep){
+      if(EntSprite.IsEventTriggered ( "Jump" )){
+        spawnDanger(ent)
+      }
+      //blastocyst
+    }else if ((ent.Type == 74||ent.Type == 75||ent.Type == 76) && EntSprite.IsPlaying("JumpUp") && IRFconfig.blastocyst){
+      if(EntSprite.IsEventTriggered ( "Jump" )){
+        spawnDanger(ent)
+      }
+      //Daddy & triachnide
+    }else if ((ent.Type == 101) && IRFconfig.Daddy){
+      if((EntSprite.IsPlaying("StompArm") || EntSprite.IsPlaying("StompLeg"))){
+        if(EntSprite.GetFrame() == 1){
+          spawnDanger(ent)
+        }
+      }
+      //BetterMonster compatibility
+      else if(BetterMonsters !== undefined){
+        if(EntSprite.IsPlaying("Up")){
+          if(EntSprite.IsEventTriggered ( "Jump" )){
+            spawnDanger(ent)
+          }
+        }
+      }
+      //Fattsack
+    }else if ((ent.Type == 209) && (EntSprite.IsPlaying("Jump"))){
+      if(IRFconfig.FatSack == true){
+        if(EntSprite.GetFrame() == 7){
+          spawnDanger(ent, 0.03)
+        }
+      }
+
+      //Mom's hand
+    }else if ((ent.Type == 213|| ent.Type == 287) && EntSprite.IsPlaying("JumpDown") && IRFconfig.MomHand){
+      if(EntSprite.GetFrame() == 1){
+        spawnDanger(ent)
+      }
+      //Mega fatty and 2 and sister
+    }else if ((ent.Type == 264||ent.Type == 265||ent.Type == 410) && (EntSprite.IsPlaying("Jump") || EntSprite.IsPlaying("Jumping")) && IRFconfig.MegaFatty){
+      if(EntSprite.IsEventTriggered ( "Jump" )){
+        spawnDanger(ent)
+      }
+      //Adult leach
+    }else if ((ent.Type == 854) && (EntSprite.IsPlaying("ChargeDown")) && IRFconfig.ALeach){
+      if(EntSprite.GetFrame() == 1){
+        spawnDanger(ent)
+      }
+      //Beelzeblub
+    }else if ((ent.Type == 901) && (EntSprite.IsPlaying("Attack04")) && IRFconfig.Beelzeblub){
+      if(EntSprite.IsEventTriggered ( "Jump" )){
+        spawnDanger(ent)
+      }
+      //Singe //!à voir
+    }else if ((ent.Type == 915) && EntSprite.IsPlaying("SuperBlast") && IRFconfig.Singe){
+      if(EntSprite.IsEventTriggered ( "Shoot" )){
+        spawnDanger(ent)
+      }
+      //Adversary
+    }else if ((ent.Type == 268) && EntSprite.IsPlaying("FlyUp") && IRFconfig.Adversary){
+      if(EntSprite.IsEventTriggered ( "Fly" )){
+        spawnDanger(ent)
+      }
+
+    }
+    if(FiendFolio !== undefined ){
+      FFCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    }
+
+  });
+  //! security
+  ActiveZone.forEach(zone => {
+    if(zone?.Parent?.IsDead() ||!zone?.Parent?.Exists()){
+      zone.Remove();
+    }
+  });
+}
+function postUpdate(){
+  let entities = Isaac.GetRoomEntities();
+  let enemy = [] as Entity[];
+  if(entities.length === 0){
+  //  DebugText = "no entity"
+  } else {
+    entities.forEach(ent => {
+    if(ent.IsActiveEnemy(true)){
+      //printConsole(`${ent}`)
+      enemy.push(ent);
+    }
+  });
+}
+  ActiveEnemy = enemy;
+}
+
+function ProjectileDetect(Projectile){
+
+  let data = Projectile.GetData() as DangerData;;
+  if(IRFconfig.AllProjectile == true){
+    if(Projectile.Height < -200){
+        if(data.Danger != 1){
+          printConsole(`${Projectile.Height}`)
+          spawnProjectileDanger(Projectile)
+        }
+    }
+  }
+  if(IRFconfig.RockFall == true){
+    if(Projectile.Height < -200 && Projectile.Variant == 9){
+      if(data.Danger != 1){
+        printConsole(`${Projectile.CurvingStrength}`)
+        spawnProjectileDanger(Projectile)
+      }
+    }
+  }
+}
+
+function ProjectileCalculation(){
+  if(ActiveProjectile){
+    ActiveProjectile.forEach(p => {
+      if(!p?.Parent?.Exists()){
+          p.Remove();
+        } else {
+          p.Position = p.Parent.Position;
+        }
+    });
+  }
+}
+
+//! clean data
+function cleaner(){
+  if(ActiveEnemy){
+    printConsole(`trigger enemy`)
+    ActiveEnemy = []
+  }
+  if(ActiveZone){
+    printConsole(`trigger zone`)
+    ActiveZone = []
+  }
+  if(ActiveProjectile){
+    printConsole(`trigger projectile`)
+    ActiveProjectile = []
+  }
+}
+
+
+function main() {
+  // Instantiate a new mod object, which grants the ability to add callback functions that
+  // correspond to in-game events.
+  const mod = RegisterMod("ComingDownRework", 1);
+
+  //! MOD CONFIG MENU
+
+  function postGameStarted() {
+    if (mod.HasData()) {
+      const loadedFromSave = json.decode(Isaac.LoadModData(mod)) as Record<
+        string,
+        any
+      >;
+
+      for (const [k, v] of pairs(loadedFromSave)) {
+        IRFconfig[k] = v;
+      }
+    }
+  }
+
+  function preGameExit() {
+    mod.SaveData(json.encode(IRFconfig));
+  }
+
+
+  mod.AddCallback(ModCallback.POST_NEW_ROOM, cleaner)
+  mod.AddCallback(ModCallback.PRE_GAME_EXIT, preGameExit)
+  mod.AddCallback(ModCallback.PRE_GAME_EXIT, cleaner)
+  mod.AddCallback(ModCallback.POST_GAME_STARTED, postGameStarted);
+
+  ModConfig(IRFconfig);
+  //! END MOD CONFIG MENU
+
+  mod.AddCallback(ModCallback.POST_EFFECT_UPDATE, ProjectileCalculation, 8745)
+  mod.AddCallback(ModCallback.POST_RENDER, postRender);
+  mod.AddCallback(ModCallback.POST_UPDATE, postUpdate)
+  mod.AddCallback(ModCallback.POST_PROJECTILE_UPDATE, ProjectileDetect)
+
+
+
+
+  // Print a message to the "log.txt" file.
+  //Isaac.DebugString(`${MOD_NAME} initialized.`);
+}
+
+function postGameStarted() {
+  Isaac.DebugString("Callback fired: POST_GAME_STARTED");
+}
