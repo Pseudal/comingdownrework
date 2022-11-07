@@ -5,7 +5,7 @@ export function ModConfig(IRFconfig) {
     ModConfigMenu.AddSpace("Coming Down!", "About");
     ModConfigMenu.AddText("Coming Down!","About",() => "Coming Down ![Rework]",);
     ModConfigMenu.AddSpace("Coming Down!", "About");
-    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.0`);
+    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.1`);
 
     ModConfigMenu.AddSpace("Coming Down!", "About");
     ModConfigMenu.AddText("Coming Down!", "About", () => "Remake made by Tidloas with love");
@@ -77,14 +77,21 @@ export function ModConfig(IRFconfig) {
     addItem("GreedCoin", "Projectiles", "GreedBigCoin", "Enables the indicator for Greedier big coin.");
     addItem("AllProjectile", "Projectiles", "All Falling Projectiles", "Experimental option, activates the indicator on all projectiles falling on Isaac. Possible bug and incompatibility.");
 //    if(Fiend ){
-      addItem("Slammer", "FiendFolio", "Slammer", "Enables the indicator for Slammer and his variants.");
-      addItem("Poobottle", "FiendFolio", "Poobottle", "Enables the indicator for Poobottle, Dragonfly and their variants.");
-      addItem("Diplet", "FiendFolio", "Diplet", "Enables the indicator for Diplet and his variants.");
-      addItem("Battie", "FiendFolio", "Battie", "Enables the indicator for Battie and his variants.");
-      addItem("Monsoon", "FiendFolio", "Monsoon", "Enables the indicator for Monsoon and his variants.");
-      addItem("Peeping", "FiendFolio", "Peeping", "Enables the indicator for Peeping and his variants.");
-      addItem("Tsar", "FiendFolio", "Tsar", "Enables the indicator for Tsar and his variants.");
-      addItem("Dusk", "FiendFolio", "Dusk", "Enables the indicator for Dusk and his variants.");
+      ModConfigMenu.AddText("Coming Down!", "FF & Rev", () => "Fiend Folio");
+      addItem("Slammer", "FF & Rev", "Slammer", "Enables the indicator for Slammer and his variants.");
+      addItem("Poobottle", "FF & Rev", "Poobottle", "Enables the indicator for Poobottle, Dragonfly and their variants.");
+      addItem("Diplet", "FF & Rev", "Diplet", "Enables the indicator for Diplet and his variants.");
+      addItem("Battie", "FF & Rev", "Battie", "Enables the indicator for Battie and his variants.");
+      addItem("Monsoon", "FF & Rev", "Monsoon", "Enables the indicator for Monsoon and his variants.");
+      addItem("Peeping", "FF & Rev", "Peeping", "Enables the indicator for Peeping and his variants.");
+      addItem("Tsar", "FF & Rev", "Tsar", "Enables the indicator for Tsar and his variants.");
+      addItem("Dusk", "FF & Rev", "Dusk", "Enables the indicator for Dusk and his variants.");
+      ModConfigMenu.AddText("Coming Down!", "FF & Rev", () => "Revelation");
+      addItem("FatSnow", "FF & Rev", "FatSnow", "Enables the indicator for FatSnow and his variants.");
+      addItem("Chuck", "FF & Rev", "Chuck", "Enables the indicator for Chuck and his variants.");
+      addItem("Glasstro", "FF & Rev", "Glasstro", "Enables the indicator for Glasstro and his variants.");
+      addItem("Aragnid", "FF & Rev", "Aragnid", "Enables the indicator for Aragnid and his variants.");
+      addItem("Catastroph", "FF & Rev", "Cricket", "Enables the indicator for Cricket and his variants.");
 //    }
 
 //    if(SWAMP ){
@@ -93,11 +100,19 @@ export function ModConfig(IRFconfig) {
       addItem("RogHorn", "Other", "RogHorn", "Enables the indicator for RogHorn and his variants(not rly useful).");
 //    }
     addItem("DadAlt", "Special", "Daddy alt", "Alternative animation for daddy, I don't really like it, but can be more practical..");
+    addItem("Debug", "Special", "Debug", "Displays text with information about an entity, useful for when I am working or if you want to propose a mod..");
+
+    ModConfigMenu.AddSpace("Coming Down!", "ChangeLog");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Alternative animation for daddy(wip) ");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ added some Revelation boss/mobs");
+
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddText("Coming Down!", "Credit", () => "PixelPlz for his advice and help");
     ModConfigMenu.AddText("Coming Down!", "Credit", () => "Querty for his contribution on the Revamp");
     ModConfigMenu.AddText("Coming Down!", "Credit", () => "Made with the IsaacScript framework");
+
+
   }
 }

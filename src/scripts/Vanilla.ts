@@ -20,7 +20,7 @@ export function VanillaElseIfHell(ent, EntSprite, spawnDanger, data, remove, IRF
     }
     //Mom & Satan stomp
   }else if ((ent.Type == 45 || ent.Type == 84 ||(ent.Type == 1000 && ent.Variant == 29)) && EntSprite.IsPlaying("Stomp" ) && IRFconfig.Mom){
-    printConsole(`${EntSprite.GetAnimation()} ${EntSprite.GetOverlayAnimation ()}trigger`)
+    //printConsole(`${EntSprite.GetAnimation()} ${EntSprite.GetOverlayAnimation ()}trigger`)
     let scale = 0.03
       if(EntSprite.GetFrame() <= 12){
         if(ent.Type == 84)

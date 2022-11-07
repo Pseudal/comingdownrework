@@ -2,8 +2,10 @@ import { ModCallback } from "isaac-typescript-definitions";
 //import { printConsole } from "isaacscript-common";
 
 import * as json from "json";
+import { IRFconfig } from "./scripts/Config"
 import { FFCompatibility } from "./scripts/FiendFolio";
 import { SwampyCompatibility } from "./scripts/Swampy";
+import { RevCompatibility } from "./scripts/Rev";
 import { VanillaElseIfHell } from "./scripts/Vanilla"
 import {IHateDelirium} from "./scripts/DeliriumHell"
 import {ModConfig} from "./scripts/modConfigMenu"
@@ -12,50 +14,50 @@ interface DangerData {
   Danger: int | undefined;
   ZoneLink: unknown | undefined;
 }
-let DebugText = "";
+
 let ActiveEnemy = [] as Entity[];
 let ActiveZone = [] as Entity[];
 let ActiveProjectile = [] as Entity[];
 declare const ModConfigMenu: unknown | undefined;
+//Compatibility
 declare const BetterMonsters: unknown | undefined;
 declare const FiendFolio: unknown | undefined;
 declare const SWAMPY: unknown | undefined;
-let IRFconfig = {
-  FatSack: true,
-  Leaper: true,
-  Monstro: true,
-  Mom: true,
-  Peep: true,
-  blastocyst: true,
-  Daddy: true,
-  DadAlt: true,
-  MomHand: true,
-  MegaFatty: true,
-  ALeach: true,
-  Beelzeblub: true,
-  Singe: true,
-  Adversary: true,
-  Delirium: true,
-  MegaSatan: true,
-  UltraGreed:true,
-  GreedCoin:true,
-  Mother: false,
-  //Fiend Folio
-  Slammer: true,
-  Poobottle: true,
-  Diplet: true,
-  Battie: true,
-  Monsoon: true,
-  Peeping: true,
-  Tsar: true,
-  Dusk: true,
-  RockFall: true,
-  AllProjectile: false,
-  //Splashy
-  Splashy: true,
-  RogHorn: true,
-}
+declare const REVEL: unknown | undefined;
+
+let debugEntity : Entity | undefined;
+let debugSprite : Sprite | undefined;
+let debugData : unknown | undefined;
+
 main();
+
+function debugComing (ent, sprite, data){
+  if(ent){
+    debugEntity = ent
+  }
+  if(sprite){
+    debugSprite = sprite
+  }
+  if(data){
+    debugData = data
+  }
+}
+function debugTextCOming(){
+
+  if(IRFconfig.Debug == true){
+    if(debugEntity !== undefined){
+      Isaac.RenderText(`entity type : ${debugEntity.Type}, variant : ${debugEntity.Variant}, health : ${debugEntity.HitPoints}`, 50, 30, 255, 255, 255, 255)
+    }else{
+      Isaac.RenderText(`No entity `, 50, 30, 255, 255, 255, 255)
+    }
+    if(debugSprite !== undefined){
+      Isaac.RenderText(`Playing : ${debugSprite.GetAnimation()}, frame : ${debugSprite.GetFrame()}`, 50, 40, 255, 255, 255, 255)
+    }else{
+      Isaac.RenderText(`No entity playing`, 50, 40, 255, 255, 255, 255)
+    }
+  }
+}
+
 
 function removeDanger(data){
 
@@ -103,21 +105,26 @@ function postRender(){
   ActiveEnemy.forEach(ent => {
     let data = ent.GetData() as unknown as DangerData;
     let EntSprite = ent.GetSprite()
-    //!check some special Vanilla entity end of stomp & normal stop action
+    debugComing(ent, EntSprite, data)
+    //!check some special Vanilla entity end of stomp & "normal" stop action
     if(data.Danger == 1 && ent.Type !== 412  && (EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" )))){
       removeDanger(data)
     }
     VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+
     if(IRFconfig.Delirium){
       IHateDelirium(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
     }
-
+    //mod compatibility
     if(FiendFolio !== undefined ){
       FFCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
     }
-    //Small mod compatibility
+
     if(SWAMPY !== undefined ){
       SwampyCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    }
+    if(REVEL !== undefined ){
+      RevCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
     }
   });
   //! security
@@ -134,8 +141,8 @@ function postUpdate(){
   if(entities.length === 0){
   //  DebugText = "no entity"
   } else {
-    entities.forEach(ent => {
-    if(ent.IsActiveEnemy(true) || (ent.Type == 1000 && ent.Variant == 29)){
+    entities.forEach(ent => {                                                 //rev glasstro
+    if(ent.IsActiveEnemy(true) || (ent.Type == 1000 && ent.Variant == 29) || (ent.Type == 1000 && ent.Variant == 3480)){
       //printConsole(`${ent}`)
       enemy.push(ent);
     }
@@ -233,10 +240,5 @@ function main() {
   mod.AddCallback(ModCallback.POST_UPDATE, postRender);
   mod.AddCallback(ModCallback.POST_UPDATE, postUpdate)
   mod.AddCallback(ModCallback.POST_PROJECTILE_UPDATE, ProjectileDetect)
-
-
-
-
-  // Print a message to the "log.txt" file.
-  //Isaac.DebugString(`${MOD_NAME} initialized.`);
+  mod.AddCallback(ModCallback.POST_RENDER, debugTextCOming)
 }
