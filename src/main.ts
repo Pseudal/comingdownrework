@@ -1,4 +1,4 @@
-import { ModCallback } from "isaac-typescript-definitions";
+import { EffectVariant, ModCallback } from "isaac-typescript-definitions";
 //import { printConsole } from "isaacscript-common";
 
 import * as json from "json";
@@ -58,6 +58,23 @@ function debugTextCOming(){
   }
 }
 
+function spawnTracer(ent) {
+  let data = ent.GetData() as DangerData; //!This is a security, prevents some entity from having multiple zones
+
+  if(data.Danger == 1)
+    return;
+  let effect = Isaac.Spawn(1000, EffectVariant.GENERIC_TRACER, 0, ent.Position, Vector(0,0), ent).ToEffect()
+  // effect.PositionOffset = -DefaultTracerOffset
+  //effect.Color = Color(150, 0, 0, 1, 0, 0, 0);
+  // effect.SpriteScale = Vector(1,0.2)
+  effect.SpriteScale = 200
+  effect.LifeSpan = 25;
+  effect.Timeout = effect.LifeSpan
+  effect.TargetPosition = Vector(0,99999)
+  data.Danger = 1;
+  effect.Update()
+
+}
 
 function removeDanger(data){
 
@@ -110,7 +127,7 @@ function postRender(){
     if(data.Danger == 1 && ent.Type !== 412  && (EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" )))){
       removeDanger(data)
     }
-    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig, spawnTracer)
 
     if(IRFconfig.Delirium){
       IHateDelirium(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
@@ -154,17 +171,24 @@ function postUpdate(){
 function ProjectileDetect(Projectile){
 
   let data = Projectile.GetData() as DangerData;;
+  if(IRFconfig.MonsnoowProjectile == true && Projectile.Variant == 4){
+    if(Projectile.Height < -300){
+        if(data.Danger !== 1){
+          //printConsole(`hauteur: ${Projectile.Height} variant: ${Projectile.Variant} scale: ${Projectile.Scale}`)
+          spawnProjectileDanger(Projectile)
+        }
+    }
+  }
   if(IRFconfig.AllProjectile == true){
     if(Projectile.Height < -200){
-        if(data.Danger != 1){
-          //printConsole(`${Projectile.Height}`)
+        if(data.Danger !== 1){
           spawnProjectileDanger(Projectile)
         }
     }
   }
   if(IRFconfig.RockFall == true){
     if(Projectile.Height < -200 && Projectile.Variant == 9){
-      if(data.Danger != 1){
+      if(data.Danger !== 1){
         //printConsole(`${Projectile.CurvingStrength}`)
         spawnProjectileDanger(Projectile)
       }
@@ -239,6 +263,6 @@ function main() {
   mod.AddCallback(ModCallback.POST_EFFECT_UPDATE, ProjectileCalculation, 8745)
   mod.AddCallback(ModCallback.POST_UPDATE, postRender);
   mod.AddCallback(ModCallback.POST_UPDATE, postUpdate)
-  mod.AddCallback(ModCallback.POST_PROJECTILE_UPDATE, ProjectileDetect)
+  mod.AddCallback(ModCallback.POST_PROJECTILE_RENDER, ProjectileDetect)
   mod.AddCallback(ModCallback.POST_RENDER, debugTextCOming)
 }

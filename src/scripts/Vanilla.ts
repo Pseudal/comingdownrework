@@ -1,8 +1,7 @@
 import { printConsole } from "isaacscript-common";
-
 declare const BetterMonsters: unknown | undefined;
 
-export function VanillaElseIfHell(ent, EntSprite, spawnDanger, data, remove, IRFconfig):void {
+export function VanillaElseIfHell(ent, EntSprite, spawnDanger, data, remove, IRFconfig, spawnTracer):void {
   //leaper
   //printConsole(`${EntSprite.GetAnimation()}`)
   if(ent.Type == 34 && EntSprite.IsPlaying("BigJumpUp")){
@@ -148,6 +147,16 @@ export function VanillaElseIfHell(ent, EntSprite, spawnDanger, data, remove, IRF
     if(EntSprite.IsPlaying("JumpDown")){
       if(EntSprite.IsEventTriggered ( "Shoot" ))
         remove(data)
+    }
+  }//WIP rage creep
+  else if (ent.Type == 241){
+    //printConsole(`${EntSprite.GetAnimation()}`)
+    if(EntSprite.IsPlaying("Attack") && EntSprite.GetFrame() < 20){
+      spawnTracer(ent)
+      printConsole("trigger")
+    }
+    if(EntSprite.IsPlaying("Attack") && EntSprite.GetFrame() > 20){
+      data.Danger = 0;
     }
   }
 
