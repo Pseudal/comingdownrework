@@ -13,7 +13,6 @@ import { printConsole } from "isaacscript-common";
 interface DangerData {
   Danger: int | undefined;
   ZoneLink: unknown | undefined;
-  IndicatorBrim: unknown | undefined;
 }
 
 let ActiveEnemy = [] as Entity[];
@@ -44,54 +43,20 @@ function debugComing (ent, sprite, data){
   }
 }
 function debugTextCOming(){
-
   if(IRFconfig.Debug == true){
     if(debugEntity !== undefined){
       Isaac.RenderText(`entity type : ${debugEntity.Type}, variant : ${debugEntity.Variant}, health : ${debugEntity.HitPoints}`, 50, 30, 255, 255, 255, 255)
+      Isaac.RenderText(`entity position : ${debugEntity.Position} colision : ${debugEntity.GridCollisionClass}`, 50, 40, 255, 255, 255, 255)
     }else{
       Isaac.RenderText(`No entity `, 50, 30, 255, 255, 255, 255)
     }
     if(debugSprite !== undefined){
-      Isaac.RenderText(`Playing : ${debugSprite.GetAnimation()}, frame : ${debugSprite.GetFrame()}`, 50, 40, 255, 255, 255, 255)
+      Isaac.RenderText(`Playing : ${debugSprite.GetAnimation()}, frame : ${debugSprite.GetFrame()}, rotation : ${debugSprite.Rotation}`, 50, 80, 255, 255, 255, 255)
+      Isaac.RenderText(`FlipX : ${debugSprite.FlipX}, FlipY : ${debugSprite.FlipY}`, 50, 90, 255, 255, 255, 255)
     }else{
-      Isaac.RenderText(`No entity playing`, 50, 40, 255, 255, 255, 255)
+      Isaac.RenderText(`No entity playing`, 50, 80, 255, 255, 255, 255)
     }
   }
-}
-
-function LaserIndicator(ent, angle: any[]) {
-  let data = ent.GetData() as DangerData;
-
-  if(data.Danger == 1){
-    //printConsole(`${data.IndicatorBrim.length}`)
-
-    // data.IndicatorBrim[i].Color = Color.Lerp(data.brim[i].Color,Color(2,0.0,0.0,1),0.2)
-    // data.IndicatorBrim.Color = Color.Lerp(data.IndicatorBrim.Color,Color(2,0.0,0.0,1),0.2)
-    for (let index = 0; index < data.IndicatorBrim.length; index++) {
-      const indicator = data.IndicatorBrim[index];
-      indicator.Color = Color.Lerp(data.IndicatorBrim.Color,Color(2,0.0,0.0,1),0.2)
-    }
-    return;
-  }
-  else{
-    let i = 0
-    data.IndicatorBrim = {}
-    for (let index = 0; index < angle.length; index++) {
-      let indicator = Isaac.Spawn(7, 7, 0, ent.Position,  Vector(0,0).Rotated(0), ent).ToLaser();
-      printConsole('brim de la mor '+ `${angle}`)
-      indicator.Angle = 90 * angle[index];
-      indicator.Color = Color(2,0.0,0.0,0)
-      indicator.Parent = ent
-      data.IndicatorBrim[index] = indicator
-      data.Danger = 1;
-    }
-  }
-}
-function RemoveLaserIndicator(ent, sprite, frame) {
-  let data = ent.GetData() as DangerData;
-  data.IndicatorBrim.forEach(indicator => {
-    indicator.Remove()
-  });
 }
 
 function removeDanger(data){
@@ -145,7 +110,7 @@ function postRender(){
     if(data.Danger == 1 && ent.Type !== 412  && (EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" )))){
       removeDanger(data)
     }
-    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig, LaserIndicator, RemoveLaserIndicator)
+    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
 
     if(IRFconfig.Delirium){
       IHateDelirium(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
