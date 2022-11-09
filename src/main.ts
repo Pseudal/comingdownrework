@@ -13,6 +13,7 @@ import { printConsole } from "isaacscript-common";
 interface DangerData {
   Danger: int | undefined;
   ZoneLink: unknown | undefined;
+  IndicatorBrim: unknown | undefined;
 }
 
 let ActiveEnemy = [] as Entity[];
@@ -58,22 +59,39 @@ function debugTextCOming(){
   }
 }
 
-function spawnTracer(ent) {
-  let data = ent.GetData() as DangerData; //!This is a security, prevents some entity from having multiple zones
+function LaserIndicator(ent, angle: any[]) {
+  let data = ent.GetData() as DangerData;
 
-  if(data.Danger == 1)
+  if(data.Danger == 1){
+    //printConsole(`${data.IndicatorBrim.length}`)
+
+    // data.IndicatorBrim[i].Color = Color.Lerp(data.brim[i].Color,Color(2,0.0,0.0,1),0.2)
+    // data.IndicatorBrim.Color = Color.Lerp(data.IndicatorBrim.Color,Color(2,0.0,0.0,1),0.2)
+    for (let index = 0; index < data.IndicatorBrim.length; index++) {
+      const indicator = data.IndicatorBrim[index];
+      indicator.Color = Color.Lerp(data.IndicatorBrim.Color,Color(2,0.0,0.0,1),0.2)
+    }
     return;
-  let effect = Isaac.Spawn(1000, EffectVariant.GENERIC_TRACER, 0, ent.Position, Vector(0,0), ent).ToEffect()
-  // effect.PositionOffset = -DefaultTracerOffset
-  //effect.Color = Color(150, 0, 0, 1, 0, 0, 0);
-  // effect.SpriteScale = Vector(1,0.2)
-  effect.SpriteScale = 200
-  effect.LifeSpan = 25;
-  effect.Timeout = effect.LifeSpan
-  effect.TargetPosition = Vector(0,99999)
-  data.Danger = 1;
-  effect.Update()
-
+  }
+  else{
+    let i = 0
+    data.IndicatorBrim = {}
+    for (let index = 0; index < angle.length; index++) {
+      let indicator = Isaac.Spawn(7, 7, 0, ent.Position,  Vector(0,0).Rotated(0), ent).ToLaser();
+      printConsole('brim de la mor '+ `${angle}`)
+      indicator.Angle = 90 * angle[index];
+      indicator.Color = Color(2,0.0,0.0,0)
+      indicator.Parent = ent
+      data.IndicatorBrim[index] = indicator
+      data.Danger = 1;
+    }
+  }
+}
+function RemoveLaserIndicator(ent, sprite, frame) {
+  let data = ent.GetData() as DangerData;
+  data.IndicatorBrim.forEach(indicator => {
+    indicator.Remove()
+  });
 }
 
 function removeDanger(data){
@@ -127,7 +145,7 @@ function postRender(){
     if(data.Danger == 1 && ent.Type !== 412  && (EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" )))){
       removeDanger(data)
     }
-    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig, spawnTracer)
+    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig, LaserIndicator, RemoveLaserIndicator)
 
     if(IRFconfig.Delirium){
       IHateDelirium(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
