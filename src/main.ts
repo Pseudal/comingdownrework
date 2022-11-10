@@ -1,6 +1,4 @@
-import { EffectVariant, ModCallback } from "isaac-typescript-definitions";
-//import { printConsole } from "isaacscript-common";
-
+import { ModCallback } from "isaac-typescript-definitions";
 import * as json from "json";
 import { IRFconfig } from "./scripts/Config"
 import { FFCompatibility } from "./scripts/FiendFolio";
@@ -101,7 +99,21 @@ function spawnDanger(entity, scale?, adjust?){
   data.Danger = 1; //! After the DangerZone is created, the parent entity is set to 1 for safety
 }
 
-function postRender(){
+function mobDetection(){
+  let entities = Isaac.GetRoomEntities();
+  let enemy = [] as Entity[];
+  if(entities.length === 0){
+  } else {
+      entities.forEach(ent => {                                                 //rev glasstro
+      if(ent.IsActiveEnemy(true) || (ent.Type == 1000 && ent.Variant == 29) || (ent.Type == 1000 && ent.Variant == 3480)){
+        enemy.push(ent);
+      }
+    });
+  }
+  ActiveEnemy = enemy;
+}
+
+function spawnCondition(){
   ActiveEnemy.forEach(ent => {
     let data = ent.GetData() as unknown as DangerData;
     let EntSprite = ent.GetSprite()
@@ -133,22 +145,6 @@ function postRender(){
       zone.Remove();
     }
   });
-}
-
-function postUpdate(){
-  let entities = Isaac.GetRoomEntities();
-  let enemy = [] as Entity[];
-  if(entities.length === 0){
-  //  DebugText = "no entity"
-  } else {
-    entities.forEach(ent => {                                                 //rev glasstro
-    if(ent.IsActiveEnemy(true) || (ent.Type == 1000 && ent.Variant == 29) || (ent.Type == 1000 && ent.Variant == 3480)){
-      //printConsole(`${ent}`)
-      enemy.push(ent);
-    }
-  });
-}
-  ActiveEnemy = enemy;
 }
 
 function ProjectileDetect(Projectile){
@@ -207,6 +203,10 @@ function cleaner(){
   }
 }
 
+function postUpdate(){
+  mobDetection()
+  spawnCondition()
+}
 
 function main() {
   // Instantiate a new mod object, which grants the ability to add callback functions that
@@ -244,7 +244,6 @@ function main() {
   mod.AddCallback(ModCallback.POST_NEW_ROOM, cleaner)
   mod.AddCallback(ModCallback.PRE_GAME_EXIT, cleaner)
   mod.AddCallback(ModCallback.POST_EFFECT_UPDATE, ProjectileCalculation, 8745)
-  mod.AddCallback(ModCallback.POST_UPDATE, postRender);
   mod.AddCallback(ModCallback.POST_UPDATE, postUpdate)
   mod.AddCallback(ModCallback.POST_PROJECTILE_RENDER, ProjectileDetect)
   mod.AddCallback(ModCallback.POST_RENDER, debugTextCOming)
