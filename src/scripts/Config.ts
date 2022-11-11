@@ -1,6 +1,4 @@
 export let IRFconfig = {
-  Debug: false,
-
   FatSack: true,
   Leaper: true,
   Monstro: true,

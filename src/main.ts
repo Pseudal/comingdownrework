@@ -1,13 +1,12 @@
 import { ModCallback } from "isaac-typescript-definitions";
 import * as json from "json";
-import { IRFconfig } from "./scripts/Config"
+import { IRFconfig } from "./scripts/Config";
+import { IHateDelirium } from "./scripts/DeliriumHell";
 import { FFCompatibility } from "./scripts/FiendFolio";
-import { SwampyCompatibility } from "./scripts/Swampy";
+import { ModConfig } from "./scripts/modConfigMenu";
 import { RevCompatibility } from "./scripts/Rev";
-import { VanillaElseIfHell } from "./scripts/Vanilla"
-import {IHateDelirium} from "./scripts/DeliriumHell"
-import {ModConfig} from "./scripts/modConfigMenu"
-import { printConsole } from "isaacscript-common";
+import { SwampyCompatibility } from "./scripts/Swampy";
+import { VanillaElseIfHell } from "./scripts/Vanilla";
 interface DangerData {
   Danger: int | undefined;
   ZoneLink: unknown | undefined;
@@ -23,89 +22,72 @@ declare const FiendFolio: unknown | undefined;
 declare const SWAMPY: unknown | undefined;
 declare const REVEL: unknown | undefined;
 
-let debugEntity : Entity | undefined;
-let debugSprite : Sprite | undefined;
-let debugData : unknown | undefined;
-
 main();
 
-function debugComing (ent, sprite, data){
-  if(ent){
-    debugEntity = ent
-  }
-  if(sprite){
-    debugSprite = sprite
-  }
-  if(data){
-    debugData = data
-  }
-}
-function debugTextCOming(){
-  if(IRFconfig.Debug == true){
-    if(debugEntity !== undefined){
-      Isaac.RenderText(`entity type : ${debugEntity.Type}, variant : ${debugEntity.Variant}, health : ${debugEntity.HitPoints}`, 50, 30, 255, 255, 255, 255)
-      Isaac.RenderText(`entity position : ${debugEntity.Position} colision : ${debugEntity.GridCollisionClass}`, 50, 40, 255, 255, 255, 255)
-    }else{
-      Isaac.RenderText(`No entity `, 50, 30, 255, 255, 255, 255)
-    }
-    if(debugSprite !== undefined){
-      Isaac.RenderText(`Playing : ${debugSprite.GetAnimation()}, frame : ${debugSprite.GetFrame()}, rotation : ${debugSprite.Rotation}`, 50, 80, 255, 255, 255, 255)
-      Isaac.RenderText(`FlipX : ${debugSprite.FlipX}, FlipY : ${debugSprite.FlipY}`, 50, 90, 255, 255, 255, 255)
-    }else{
-      Isaac.RenderText(`No entity playing`, 50, 80, 255, 255, 255, 255)
-    }
-  }
+function removeDanger(data) {
+  data.ZoneLink.Remove();
+  data.Danger = 0;
 }
 
-function removeDanger(data){
-
-    data.ZoneLink.Remove();
-    data.Danger = 0;
-
-
-}
-
-function spawnProjectileDanger(Projectile){
+function spawnProjectileDanger(Projectile) {
   let data = Projectile.GetData() as DangerData;
-  let anim = Isaac.Spawn(1000, 8745, 0, Projectile.Position, Vector(0,0), undefined)
+  let anim = Isaac.Spawn(
+    1000,
+    8745,
+    0,
+    Projectile.Position,
+    Vector(0, 0),
+    undefined,
+  );
   //anim.ToEffect().FollowParent(Projectile)
   // anim.SetSize(-50, Vector(1,1), 0)
-  anim.SpriteScale = Vector(0.05*Projectile.Size, 0.05*Projectile.Size)
-  anim.Parent = Projectile
-  ActiveProjectile.push(anim)
+  anim.SpriteScale = Vector(0.05 * Projectile.Size, 0.05 * Projectile.Size);
+  anim.Parent = Projectile;
+  ActiveProjectile.push(anim);
   data.Danger = 1;
 }
 
-function spawnDanger(entity, scale?, adjust?){
-
+function spawnDanger(entity, scale?, adjust?) {
   let data = entity.GetData() as DangerData; //!This is a security, prevents some entity from having multiple zones
-  if(data.Danger == 1)
-    return;
-  let anim = Isaac.Spawn(1000, 8745, 0, Vector(entity.Position.X, entity.Position.Y), Vector(0,0), undefined) //* spawn the animation
+  if (data.Danger == 1) return;
+  let anim = Isaac.Spawn(
+    1000,
+    8745,
+    0,
+    Vector(entity.Position.X, entity.Position.Y),
+    Vector(0, 0),
+    undefined,
+  ); //* spawn the animation
   //anim.ToNPC().CanShutDoors = false
-  anim.RenderZOffset =  -6999
-  anim.ToEffect().FollowParent(entity) //*make the animation follow the trigger entity
-  if(adjust){ //*Some mob have a small size, this condition is used in case an adjustment is needed.
-    anim.SpriteScale = Vector(scale*entity.Size, adjust*entity.Size) //* make the animation scale with the entity size
-  }else if(scale && !adjust){ //*used in rly rare case
-    anim.SpriteScale = Vector(scale*entity.Size, scale*entity.Size)
-  }else{
-    anim.SpriteScale = Vector(0.0225*entity.Size, 0.0225*entity.Size)//*Randomly found number, with this value, the area is a bit bigger than the mob in majority
+  anim.RenderZOffset = -6999;
+  anim.ToEffect().FollowParent(entity); //*make the animation follow the trigger entity
+  if (adjust) {
+    //*Some mob have a small size, this condition is used in case an adjustment is needed.
+    anim.SpriteScale = Vector(scale * entity.Size, adjust * entity.Size); //* make the animation scale with the entity size
+  } else if (scale && !adjust) {
+    //*used in rly rare case
+    anim.SpriteScale = Vector(scale * entity.Size, scale * entity.Size);
+  } else {
+    anim.SpriteScale = Vector(0.0225 * entity.Size, 0.0225 * entity.Size); //*Randomly found number, with this value, the area is a bit bigger than the mob in majority
   }
-  anim.Parent = entity //* make the animation parent the trigger entity, for the suppression
-  ActiveZone.push(anim) //* activeZone used to retrieve the animation later
+  anim.Parent = entity; //* make the animation parent the trigger entity, for the suppression
+  ActiveZone.push(anim); //* activeZone used to retrieve the animation later
 
-  data.ZoneLink = anim
+  data.ZoneLink = anim;
   data.Danger = 1; //! After the DangerZone is created, the parent entity is set to 1 for safety
 }
 
-function mobDetection(){
+function mobDetection() {
   let entities = Isaac.GetRoomEntities();
   let enemy = [] as Entity[];
-  if(entities.length === 0){
+  if (entities.length === 0) {
   } else {
-      entities.forEach(ent => {                                                 //rev glasstro
-      if(ent.IsActiveEnemy(true) || (ent.Type == 1000 && ent.Variant == 29) || (ent.Type == 1000 && ent.Variant == 3480)){
+    entities.forEach((ent) => {
+      if (
+        ent.IsActiveEnemy(true) ||
+        (ent.Type == 1000 && ent.Variant == 29) ||
+        (ent.Type == 1000 && ent.Variant == 3480)//rev glasstro
+      ) {
         enemy.push(ent);
       }
     });
@@ -113,99 +95,137 @@ function mobDetection(){
   ActiveEnemy = enemy;
 }
 
-function spawnCondition(){
-  ActiveEnemy.forEach(ent => {
+function spawnCondition() {
+  ActiveEnemy.forEach((ent) => {
     let data = ent.GetData() as unknown as DangerData;
-    let EntSprite = ent.GetSprite()
-    debugComing(ent, EntSprite, data)
+    let EntSprite = ent.GetSprite();
     //!check some special Vanilla entity end of stomp & "normal" stop action
-    if(data.Danger == 1 && ent.Type !== 412  && (EntSprite.IsEventTriggered( "Land" ) || EntSprite.IsEventTriggered( "Appear" ) || EntSprite.IsEventTriggered( "Stomp" )|| EntSprite.IsEventTriggered( "Landed" )||((ent.Type == 68||ent.Type == 45) && EntSprite.IsEventTriggered( "Shoot" ))||((ent.Type == 209 || ent.Type == 854)&& EntSprite.IsEventTriggered( "Hit" )))){
-      removeDanger(data)
+    if (
+      data.Danger == 1 &&
+      ent.Type !== 412 &&
+      (EntSprite.IsEventTriggered("Land") ||
+        EntSprite.IsEventTriggered("Appear") ||
+        EntSprite.IsEventTriggered("Stomp") ||
+        EntSprite.IsEventTriggered("Landed") ||
+        ((ent.Type == 68 || ent.Type == 45) &&
+          EntSprite.IsEventTriggered("Shoot")) ||
+        ((ent.Type == 209 || ent.Type == 854) &&
+          EntSprite.IsEventTriggered("Hit")))
+    ) {
+      removeDanger(data);
+      return
     }
-    VanillaElseIfHell(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    VanillaElseIfHell(
+      ent,
+      EntSprite,
+      spawnDanger,
+      data,
+      removeDanger,
+      IRFconfig,
+    );
 
-    if(IRFconfig.Delirium){
-      IHateDelirium(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    if (IRFconfig.Delirium) {
+      IHateDelirium(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig);
     }
     //mod compatibility
-    if(FiendFolio !== undefined ){
-      FFCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    if (FiendFolio !== undefined) {
+      FFCompatibility(
+        ent,
+        EntSprite,
+        spawnDanger,
+        data,
+        removeDanger,
+        IRFconfig,
+      );
     }
 
-    if(SWAMPY !== undefined ){
-      SwampyCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    if (SWAMPY !== undefined) {
+      SwampyCompatibility(
+        ent,
+        EntSprite,
+        spawnDanger,
+        data,
+        removeDanger,
+        IRFconfig,
+      );
     }
-    if(REVEL !== undefined ){
-      RevCompatibility(ent, EntSprite, spawnDanger, data, removeDanger, IRFconfig)
+    if (REVEL !== undefined) {
+      RevCompatibility(
+        ent,
+        EntSprite,
+        spawnDanger,
+        data,
+        removeDanger,
+        IRFconfig,
+      );
     }
   });
   //! security
-  ActiveZone.forEach(zone => {
-    if(zone?.Parent?.IsDead() ||!zone?.Parent?.Exists()){
+  ActiveZone.forEach((zone) => {
+    if (zone?.Parent?.IsDead() || !zone?.Parent?.Exists()) {
       zone.Remove();
+      return;
     }
   });
 }
 
-function ProjectileDetect(Projectile){
-
-  let data = Projectile.GetData() as DangerData;;
-  if(IRFconfig.MonsnoowProjectile == true && Projectile.Variant == 4){
-    if(Projectile.Height < -300){
-        if(data.Danger !== 1){
-          //printConsole(`hauteur: ${Projectile.Height} variant: ${Projectile.Variant} scale: ${Projectile.Scale}`)
-          spawnProjectileDanger(Projectile)
-        }
+function ProjectileDetect(Projectile) {
+  let data = Projectile.GetData() as DangerData;
+  if (IRFconfig.MonsnoowProjectile == true && Projectile.Variant == 4) {
+    if (Projectile.Height < -300) {
+      if (data.Danger !== 1) {
+        spawnProjectileDanger(Projectile);
+        return;
+      }
     }
   }
-  if(IRFconfig.AllProjectile == true){
-    if(Projectile.Height < -200){
-        if(data.Danger !== 1){
-          spawnProjectileDanger(Projectile)
-        }
+  if (IRFconfig.AllProjectile == true) {
+    if (Projectile.Height < -200) {
+      if (data.Danger !== 1) {
+        spawnProjectileDanger(Projectile);
+        return;
+      }
     }
   }
-  if(IRFconfig.RockFall == true){
-    if(Projectile.Height < -200 && Projectile.Variant == 9){
-      if(data.Danger !== 1){
-        //printConsole(`${Projectile.CurvingStrength}`)
-        spawnProjectileDanger(Projectile)
+  if (IRFconfig.RockFall == true) {
+    if (Projectile.Height < -200 && Projectile.Variant == 9) {
+      if (data.Danger !== 1) {
+        spawnProjectileDanger(Projectile);
+        return;
       }
     }
   }
 }
 
-function ProjectileCalculation(){
-  if(ActiveProjectile){
-    ActiveProjectile.forEach(p => {
-      if(!p?.Parent?.Exists()){
-          p.Remove();
-        } else {
-          p.Position = p.Parent.Position;
-        }
+function ProjectileCalculation() {
+  if (ActiveProjectile) {
+    ActiveProjectile.forEach((p) => {
+      if (!p?.Parent?.Exists()) {
+        p.Remove();
+        return;
+      } else {
+        p.Position = p.Parent.Position;
+      }
     });
   }
 }
 
 //! clean data
-function cleaner(){
-  if(ActiveEnemy){
-    //printConsole(`trigger enemy`)
-    ActiveEnemy = []
+function cleaner() {
+  if (ActiveEnemy) {
+    ActiveEnemy = [];
   }
-  if(ActiveZone){
-    //printConsole(`trigger zone`)
-    ActiveZone = []
+  if (ActiveZone) {
+    ActiveZone = [];
   }
-  if(ActiveProjectile){
-    //printConsole(`trigger projectile`)
-    ActiveProjectile = []
+  if (ActiveProjectile) {
+    ActiveProjectile = [];
   }
 }
 
-function postUpdate(){
-  mobDetection()
-  spawnCondition()
+function postUpdate() {
+  mobDetection();
+  spawnCondition();
 }
 
 function main() {
@@ -232,19 +252,17 @@ function main() {
     mod.SaveData(json.encode(IRFconfig));
   }
 
-
-  mod.AddCallback(ModCallback.PRE_GAME_EXIT, preGameExit)
+  mod.AddCallback(ModCallback.PRE_GAME_EXIT, preGameExit);
   mod.AddCallback(ModCallback.POST_GAME_STARTED, postGameStarted);
 
-  if(ModConfigMenu !== undefined) {
-      ModConfig(IRFconfig);
+  if (ModConfigMenu !== undefined) {
+    ModConfig(IRFconfig);
   }
   //! END MOD CONFIG MENU
 
-  mod.AddCallback(ModCallback.POST_NEW_ROOM, cleaner)
-  mod.AddCallback(ModCallback.PRE_GAME_EXIT, cleaner)
-  mod.AddCallback(ModCallback.POST_EFFECT_UPDATE, ProjectileCalculation, 8745)
-  mod.AddCallback(ModCallback.POST_UPDATE, postUpdate)
-  mod.AddCallback(ModCallback.POST_PROJECTILE_RENDER, ProjectileDetect)
-  mod.AddCallback(ModCallback.POST_RENDER, debugTextCOming)
+  mod.AddCallback(ModCallback.POST_NEW_ROOM, cleaner);
+  mod.AddCallback(ModCallback.PRE_GAME_EXIT, cleaner);
+  mod.AddCallback(ModCallback.POST_EFFECT_UPDATE, ProjectileCalculation, 8745);
+  mod.AddCallback(ModCallback.POST_UPDATE, postUpdate);
+  mod.AddCallback(ModCallback.POST_PROJECTILE_RENDER, ProjectileDetect);
 }
