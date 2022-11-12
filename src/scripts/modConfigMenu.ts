@@ -5,7 +5,7 @@ export function ModConfig(IRFconfig) {
     ModConfigMenu.AddSpace("Coming Down!", "About");
     ModConfigMenu.AddText("Coming Down!","About",() => "Coming Down ![Rework]",);
     ModConfigMenu.AddSpace("Coming Down!", "About");
-    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.1`);
+    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.2`);
 
     ModConfigMenu.AddSpace("Coming Down!", "About");
     ModConfigMenu.AddText("Coming Down!", "About", () => "Remake made by Tidloas with love");
@@ -100,11 +100,12 @@ export function ModConfig(IRFconfig) {
       addItem("RogHorn", "Other", "RogHorn", "Enables the indicator for RogHorn and his variants(not rly useful).");
 //    }
     addItem("DadAlt", "Special", "Daddy alt", "Alternative animation for daddy, I don't really like it, but can be more practical..");
-    addItem("Debug", "Special", "Debug", "Displays text with information about an entity, useful for when I am working or if you want to propose a mod..");
 
     ModConfigMenu.AddSpace("Coming Down!", "ChangeLog");
-    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Alternative animation for daddy(wip) ");
-    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ added some Revelation boss/mobs");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Optimisation ");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Fix alt mom");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ more slammer from fiend folio");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "- debug");
 
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
