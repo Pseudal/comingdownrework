@@ -15,7 +15,6 @@ interface DangerData {
 let ActiveEnemy = [] as Entity[];
 let ActiveZone = [] as Entity[];
 let ActiveProjectile = [] as Entity[];
-declare const ModConfigMenu: unknown | undefined;
 //Compatibility
 declare const BetterMonsters: unknown | undefined;
 declare const FiendFolio: unknown | undefined;
