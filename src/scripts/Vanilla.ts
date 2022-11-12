@@ -6,7 +6,7 @@ export function VanillaElseIfHell(
   spawnDanger,
   data,
   remove,
-  IRFconfig
+  IRFconfig,
 ): void {
   //leaper
   if (ent.Type == 34 && EntSprite.IsPlaying("BigJumpUp")) {
@@ -32,15 +32,34 @@ export function VanillaElseIfHell(
     (ent.Type == 45 ||
       ent.Type == 84 ||
       (ent.Type == 1000 && ent.Variant == 29)) &&
-    EntSprite.IsPlaying("Stomp") &&
     IRFconfig.Mom
   ) {
     let scale = 0.03;
-    if (EntSprite.GetFrame() <= 12) {
-      if (ent.Type == 84) scale = 0.02;
-      if (ent.Type == 1000) {
-        scale = 1.2;
+    if (EntSprite.IsPlaying("Stomp")) {
+      if (EntSprite.GetFrame() <= 12) {
+        if (ent.Type == 84) scale = 0.02;
+        if (ent.Type == 1000) {
+          scale = 1.2;
+        }
+        spawnDanger(ent, scale);
+        return;
       }
+    }
+    if (
+      (EntSprite.IsPlaying("QuickStompBegin") && EntSprite.GetFrame() <= 26) ||
+      (EntSprite.IsPlaying("QuickStompBegin") && EntSprite.GetFrame() >= 38)
+    ) {
+      spawnDanger(ent, scale);
+      return;
+    }
+    if (
+      (EntSprite.IsPlaying("QuickStomp") && EntSprite.GetFrame() <= 6) ||
+      (EntSprite.IsPlaying("QuickStomp") && EntSprite.GetFrame() >= 18)
+    ) {
+      spawnDanger(ent, scale);
+      return;
+    }
+    if (EntSprite.IsPlaying("QuickStompEnd") && EntSprite.GetFrame() <= 6) {
       spawnDanger(ent, scale);
       return;
     }

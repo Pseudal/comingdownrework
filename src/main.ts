@@ -49,7 +49,7 @@ function spawnProjectileDanger(Projectile) {
 
 function spawnDanger(entity, scale?, adjust?) {
   let data = entity.GetData() as DangerData; //!This is a security, prevents some entity from having multiple zones
-  if (data.Danger == 1) return;
+  if (data.Danger == 1){ return;}
   let anim = Isaac.Spawn(
     1000,
     8745,
