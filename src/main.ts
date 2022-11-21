@@ -1,4 +1,5 @@
 import { ModCallback } from "isaac-typescript-definitions";
+import { printConsole } from "isaacscript-common";
 import * as json from "json";
 import { IRFconfig } from "./scripts/Config";
 import { IHateDelirium } from "./scripts/DeliriumHell";
@@ -40,7 +41,12 @@ function spawnProjectileDanger(Projectile) {
   );
   //anim.ToEffect().FollowParent(Projectile)
   // anim.SetSize(-50, Vector(1,1), 0)
-  anim.SpriteScale = Vector(0.05 * Projectile.Size, 0.05 * Projectile.Size);
+
+  if(Projectile.Variant !== 9){
+    anim.SpriteScale = Vector(0.0325 * Projectile.Size, 0.0325 * Projectile.Size);
+  } else{
+    anim.SpriteScale = Vector(0.05 * Projectile.Size, 0.05 * Projectile.Size);
+  }
   anim.Parent = Projectile;
   ActiveProjectile.push(anim);
   data.Danger = 1;
@@ -169,15 +175,8 @@ function spawnCondition() {
 }
 
 function ProjectileDetect(Projectile) {
+  printConsole(`${Projectile.DepthOffset}`)
   let data = Projectile.GetData() as DangerData;
-  if (IRFconfig.MonsnoowProjectile == true && Projectile.Variant == 4) {
-    if (Projectile.Height < -300) {
-      if (data.Danger !== 1) {
-        spawnProjectileDanger(Projectile);
-        return;
-      }
-    }
-  }
   if (IRFconfig.AllProjectile == true) {
     if (Projectile.Height < -200) {
       if (data.Danger !== 1) {

@@ -35,7 +35,6 @@ export let IRFconfig = {
   Glasstro: true,
   Aragnid: true,
   Catastroph: true,
-  MonsnoowProjectile: true,
   //Splashy
   Splashy: true,
   RogHorn: true,
