@@ -18,6 +18,8 @@ export let IRFconfig = {
   UltraGreed:true,
   GreedCoin:true,
   Mother: false,
+  RockFall: true,
+  AllProjectile: false,
   //Fiend Folio
   Slammer: true,
   Poobottle: true,
@@ -27,8 +29,7 @@ export let IRFconfig = {
   Peeping: true,
   Tsar: true,
   Dusk: true,
-  RockFall: true,
-  AllProjectile: false,
+
   //Revelations
   FatSnow: true,
   Chuck: true,

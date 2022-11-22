@@ -22,6 +22,11 @@ declare const FiendFolio: unknown | undefined;
 declare const SWAMPY: unknown | undefined;
 declare const REVEL: unknown | undefined;
 
+declare let CDComp;
+CDComp = {
+  IRFconfig
+};
+
 main();
 
 function removeDanger(data) {
@@ -175,7 +180,6 @@ function spawnCondition() {
 }
 
 function ProjectileDetect(Projectile) {
-  printConsole(`${Projectile.DepthOffset}`)
   let data = Projectile.GetData() as DangerData;
   if (IRFconfig.AllProjectile == true) {
     if (Projectile.Height < -200) {
@@ -256,6 +260,7 @@ function main() {
   if (ModConfigMenu !== undefined) {
     ModConfig(IRFconfig);
   }
+
   //! END MOD CONFIG MENU
 
   mod.AddCallback(ModCallback.POST_NEW_ROOM, cleaner);
