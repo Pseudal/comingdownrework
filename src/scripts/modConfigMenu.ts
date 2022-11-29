@@ -5,7 +5,7 @@ export function ModConfig(IRFconfig) {
     ModConfigMenu.AddSpace("Coming Down!", "About");
     ModConfigMenu.AddText("Coming Down!","About",() => "Coming Down ![Rework]",);
     ModConfigMenu.AddSpace("Coming Down!", "About");
-    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.2`);
+    ModConfigMenu.AddText("Coming Down!", "About", () => `Version 2.2.5`);
 
     ModConfigMenu.AddSpace("Coming Down!", "About");
     ModConfigMenu.AddText("Coming Down!", "About", () => "Remake made by Tidloas with love");
@@ -102,10 +102,8 @@ export function ModConfig(IRFconfig) {
     addItem("DadAlt", "Special", "Daddy alt", "Alternative animation for daddy, I don't really like it, but can be more practical..");
 
     ModConfigMenu.AddSpace("Coming Down!", "ChangeLog");
-    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Optimisation ");
-    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Fix alt mom");
-    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ more slammer from fiend folio");
-    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "- debug");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Fix Bubble projectiles ");
+    ModConfigMenu.AddText("Coming Down!", "ChangeLog", () => "+ Lower the size of the projectile danger zone a bit  ");
 
     ModConfigMenu.AddSpace("Coming Down!", "Credit");
     ModConfigMenu.AddSpace("Coming Down!", "Credit");

@@ -1,5 +1,5 @@
 import { ModCallback } from "isaac-typescript-definitions";
-import { printConsole } from "isaacscript-common";
+//import { printConsole } from "isaacscript-common";
 import * as json from "json";
 import { IRFconfig } from "./scripts/Config";
 import { IHateDelirium } from "./scripts/DeliriumHell";
