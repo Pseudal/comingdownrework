@@ -1,5 +1,5 @@
 declare const BetterMonsters: unknown | undefined;
-
+import { printConsole } from "isaacscript-common";
 export function VanillaElseIfHell(
   ent,
   EntSprite,
@@ -204,15 +204,15 @@ export function VanillaElseIfHell(
       return;
     }
     //MegaSatan
-  } else if (ent.Type == 274 && IRFconfig.MegaSatan) {
+  } else if (ent.Type == 274 && (ent.Variant == 1 || ent.Variant == 2) && IRFconfig.MegaSatan) {
     if (EntSprite.IsPlaying("SmashHand1")) {
-      if (EntSprite.GetFrame() == 1) {
+      if (EntSprite.GetFrame() < 5) {
         spawnDanger(ent);
         return;
       }
     }
-    if (EntSprite.IsPlaying("SmashHand1")) {
-      if (EntSprite.IsEventTriggered("Smash")) remove(data);
+    if ((EntSprite.IsPlaying("SmashHand1") && EntSprite.IsEventTriggered("Smash")) || (ent.ToNPC().State !== 8 && data.Danger == 1) ) {
+      remove(data);
       return;
     }
     //Ultra Greed

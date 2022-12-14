@@ -1,5 +1,5 @@
 import { ModCallback } from "isaac-typescript-definitions";
-//import { printConsole } from "isaacscript-common";
+import { printConsole } from "isaacscript-common";
 import * as json from "json";
 import { IRFconfig } from "./scripts/Config";
 import { IHateDelirium } from "./scripts/DeliriumHell";
@@ -106,7 +106,7 @@ function mobDetection() {
 }
 
 function spawnCondition() {
-  ActiveEnemy.forEach((ent) => {
+  ActiveEnemy.forEach((ent :Entity) => {
     let data = ent.GetData() as unknown as DangerData;
     let EntSprite = ent.GetSprite();
     //!check some special Vanilla entity end of stomp & "normal" stop action
